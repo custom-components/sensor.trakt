@@ -10,7 +10,7 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 # A WORK IN PROGRESS
 
 # sensor.personalcapital
-[Trakt](https://www.trakt.tv) component for Home Assistant
+[Trakt](https://www.trakt.tv) component for [Home Assistant](https://www.home-assistant.io/)
 
 To get started put `/custom_components/sensor/trakt.py` here:
 `<config directory>/custom_components/sensor/trakt.py`
