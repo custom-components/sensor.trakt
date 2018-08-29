@@ -20,8 +20,8 @@ To get started put `/custom_components/sensor/trakt.py` here:
 ```yaml
 sensor:
   platform: trakt
-  email: iantrich@email.com
-  password: 12345
+  id: 'sakdfjawioehrw3985728935uksdf'
+  key: 'sdfoiwahjeflkaswjefi83q7829045uoijksldf'
   days: 10
 ```
 
@@ -30,8 +30,8 @@ sensor:
 key | description
 :--- | :---
 **platform (Required)** | `trakt`
-**client_id (Required)** | Client ID (create new app at https://trakt.tv/oauth/applications)
-**client_key (Required)** | Client Key (create new app at https://trakt.tv/oauth/applications)
+**id (Required)** | Client ID (create new app at https://trakt.tv/oauth/applications)
+**key (Required)** | Client Key (create new app at https://trakt.tv/oauth/applications)
 **days (Optional)** | How many days to look forward for movies/shows
 
 ***
