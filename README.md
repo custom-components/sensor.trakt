@@ -9,7 +9,7 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 
 # A WORK IN PROGRESS
 
-# sensor.personalcapital
+# sensor.trakt
 [Trakt](https://www.trakt.tv) component for [Home Assistant](https://www.home-assistant.io/)
 
 To get started put `/custom_components/sensor/trakt.py` here:
@@ -30,8 +30,8 @@ sensor:
 key | description
 :--- | :---
 **platform (Required)** | `trakt`
-**email (Required)** | Email for trakt.com
-**password (Required)** | Password for trakt.com
+**client_id (Required)** | Client ID (create new app at https://trakt.tv/oauth/applications)
+**client_key (Required)** | Client Key (create new app at https://trakt.tv/oauth/applications)
 **days (Optional)** | How many days to look forward for movies/shows
 
 ***
