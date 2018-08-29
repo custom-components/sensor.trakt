@@ -29,7 +29,7 @@ sensor:
 
 key | description
 :--- | :---
-**platform (Required)** | `trakt``
+**platform (Required)** | `trakt`
 **email (Required)** | Email for trakt.com
 **password (Required)** | Password for trakt.com
 **days (Optional)** | How many days to look forward for movies/shows
