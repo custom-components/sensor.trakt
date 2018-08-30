@@ -21,7 +21,8 @@ To get started put `/custom_components/sensor/trakt.py` here:
 sensor:
   platform: trakt
   id: 'sakdfjawioehrw3985728935uksdf'
-  key: 'sdfoiwahjeflkaswjefi83q7829045uoijksldf'
+  secret: 'sdfoiwahjeflkaswjefi83q7829045uoijksldf'
+  username: iantrich
   days: 10
 ```
 
@@ -31,7 +32,8 @@ key | description
 :--- | :---
 **platform (Required)** | `trakt`
 **id (Required)** | Client ID (create new app at https://trakt.tv/oauth/applications)
-**key (Required)** | Client Key (create new app at https://trakt.tv/oauth/applications)
+**secret (Required)** | Client Secret (create new app at https://trakt.tv/oauth/applications)
+**username (Required)** | trakt.tv username
 **days (Optional)** | How many days to look forward for movies/shows
 
 ***
