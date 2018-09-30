@@ -4,20 +4,18 @@ Support for Trakt sensors.
 For more details about this platform, please refer to the documentation at
 https://github.com/custom-components/sensor.trakt
 """
-
-import logging
-import voluptuous as vol
-import requests
 import json
-import trakt
+import logging
 from datetime import timedelta
-from homeassistant.helpers.entity import Entity
-import homeassistant.helpers.config_validation as cv
-from homeassistant.components.sensor import (PLATFORM_SCHEMA)
 
-__version__ = '0.0.2'
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
+from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.helpers.entity import Entity
 
 REQUIREMENTS = ['trakt==2.8.2', 'requests_oauthlib==1.0.0']
+
+__version__ = '0.0.2'
 
 CONF_CLIENT_ID = 'id'
 CONF_CLIENT_SECRET = 'secret'
@@ -115,6 +113,7 @@ class TraktMyShowCalendarSensor(Entity):
 
     def __init__(self, hass, config, token):
         """Initialize the sensor."""
+        import trakt
         trakt.core.OAUTH_TOKEN = token
         trakt.core.CLIENT_ID = config[CONF_CLIENT_ID]
         trakt.core.CLIENT_SECRET = config[CONF_CLIENT_SECRET]
