@@ -13,7 +13,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 REQUIREMENTS = ['trakt==2.8.2', 'requests_oauthlib==1.0.0']
 
@@ -74,7 +74,7 @@ def request_app_setup(hass, config, add_devices, discovery_info=None):
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Trakt component."""
     token = load_token(hass)
-    
+
     if not token:
       request_app_setup(hass, config, add_devices, discovery_info)
     else:
@@ -84,12 +84,12 @@ def continue_setup_platform(hass, config, token, add_devices, discovery_info=Non
     """Set up the Trakt component."""
     if "trakt" in _CONFIGURING:
         hass.components.configurator.request_done(_CONFIGURING.pop("trakt"))
-        
+
     add_devices([TraktMyShowCalendarSensor(hass, config, token)], True)
-        
+
 def load_token(hass):
     try:
-        with open(hass.config.path(TOKEN_FILE)) as data_file:    
+        with open(hass.config.path(TOKEN_FILE)) as data_file:
             token = {}
             try:
                 token = json.load(data_file)
@@ -121,17 +121,18 @@ class TraktMyShowCalendarSensor(Entity):
         self._days = config[CONF_DAYS]
         self._state = None
         self._hass.data[DATA_UPCOMING] = {}
+        self._username = config[CONF_USERNAME]
         self.update()
 
     def update(self):
         """Get the latest state of the sensor."""
         from trakt.calendar import MyShowCalendar
         calendar = MyShowCalendar(days=self._days)
-        
+
         if not calendar:
             _LOGGER.error("Nothing in calendar")
             return False
-            
+
         self._state = len(calendar)
 
         for show in calendar:
@@ -154,7 +155,7 @@ class TraktMyShowCalendarSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return 'Trakt My Upcoming Calendar'
+        return 'Trakt Upcoming Calendar (' + self._username + ')'
 
     @property
     def state(self):
