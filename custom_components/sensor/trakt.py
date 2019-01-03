@@ -21,6 +21,7 @@ CONF_CLIENT_ID = 'id'
 CONF_CLIENT_SECRET = 'secret'
 CONF_USERNAME = 'username'
 CONF_DAYS = 'days'
+CONF_NAME = 'name'
 
 TOKEN_FILE = '.trakt.conf'
 
@@ -36,6 +37,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_CLIENT_SECRET): cv.string,
     vol.Required(CONF_USERNAME): cv.string,
     vol.Optional(CONF_DAYS, default=30): cv.positive_int,
+    vol.Optional(CONF_NAME, default='Trakt Upcoming Calendar'): cv.string,
 })
 
 _CONFIGURING = {}
@@ -121,7 +123,7 @@ class TraktMyShowCalendarSensor(Entity):
         self._days = config[CONF_DAYS]
         self._state = None
         self._hass.data[DATA_UPCOMING] = {}
-        self._username = config[CONF_USERNAME]
+        self._name = config[CONF_NAME]
         self.update()
 
     def update(self):
@@ -155,7 +157,7 @@ class TraktMyShowCalendarSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return 'Trakt Upcoming Calendar (' + self._username + ')'
+        return self._name
 
     @property
     def state(self):

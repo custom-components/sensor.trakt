@@ -32,7 +32,8 @@ key | description
 **id (Required)** | Client ID (create new app at https://trakt.tv/oauth/applications)
 **secret (Required)** | Client Secret (create new app at https://trakt.tv/oauth/applications)
 **username (Required)** | trakt.tv username
-**days (Optional)** | How many days to look forward for movies/shows
+**days (Optional)** | How many days to look forward for movies/shows. Default `30`
+**name (Optional)** | Sensor name. Default `Trakt Upcoming Calendar`
 
 ***
 
