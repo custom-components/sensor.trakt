@@ -16,7 +16,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 
 REQUIREMENTS = ['trakt==2.8.2', 'requests_oauthlib==1.0.0']
 
@@ -155,7 +155,10 @@ class TraktMyShowCalendarSensor(Entity):
             if not show:
                 continue
 
-            show_details = TVShow(show.show)
+            try:
+                show_details = TVShow(show.show)
+            except AttributeError:
+                _LOGGER.error('Unable to retrieve show details for ' + show.show)
 
             if not show_details:
                 continue
