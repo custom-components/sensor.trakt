@@ -1,36 +1,35 @@
 """
-Support for Trakt sensors.
+Home Assistant component to feed the Upcoming Media Lovelace card with
+Trakt user's upcoming TV episodes.
 
-For more details about this platform, please refer to the documentation at
 https://github.com/custom-components/sensor.trakt
+
+https://github.com/custom-cards/upcoming-media-card
 """
 import json
 import logging
-from datetime import timedelta
+import time
+from datetime import datetime, timedelta
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 REQUIREMENTS = ['trakt==2.8.2', 'requests_oauthlib==1.0.0']
 
+BASE_URL = 'https://api-v2launch.trakt.tv/'
 CONF_CLIENT_ID = 'id'
 CONF_CLIENT_SECRET = 'secret'
 CONF_USERNAME = 'username'
 CONF_DAYS = 'days'
 CONF_NAME = 'name'
-
-TOKEN_FILE = '.trakt.conf'
-
 DATA_UPCOMING = 'trakt_upcoming'
-
-BASE_URL = 'https://api-v2launch.trakt.tv/'
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
-
 SCAN_INTERVAL = timedelta(minutes=30)
+TOKEN_FILE = '.trakt.conf'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_CLIENT_ID): cv.string,
@@ -42,6 +41,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 _CONFIGURING = {}
 _LOGGER = logging.getLogger(__name__)
+
 
 def request_app_setup(hass, config, add_devices, discovery_info=None):
     """Request configuration steps from the user."""
@@ -73,14 +73,16 @@ def request_app_setup(hass, config, add_devices, discovery_info=None):
             'type': 'string'}]
     )
 
+
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Trakt component."""
     token = load_token(hass)
 
     if not token:
-      request_app_setup(hass, config, add_devices, discovery_info)
+        request_app_setup(hass, config, add_devices, discovery_info)
     else:
-      continue_setup_platform(hass, config, token, add_devices, discovery_info)
+        continue_setup_platform(hass, config, token, add_devices, discovery_info)
+
 
 def continue_setup_platform(hass, config, token, add_devices, discovery_info=None):
     """Set up the Trakt component."""
@@ -88,6 +90,7 @@ def continue_setup_platform(hass, config, token, add_devices, discovery_info=Non
         hass.components.configurator.request_done(_CONFIGURING.pop("trakt"))
 
     add_devices([TraktMyShowCalendarSensor(hass, config, token)], True)
+
 
 def load_token(hass):
     try:
@@ -101,14 +104,11 @@ def load_token(hass):
     except IOError as err:
         return {}
 
+
 def save_token(hass, token):
     with open(hass.config.path(TOKEN_FILE), 'w') as data_file:
         data_file.write(json.dumps(token))
 
-def xstr(s):
-    if s is None:
-        return ''
-    return str(s)
 
 class TraktMyShowCalendarSensor(Entity):
     """Representation of a Trakt My Show Calendar sensor."""
@@ -116,6 +116,8 @@ class TraktMyShowCalendarSensor(Entity):
     def __init__(self, hass, config, token):
         """Initialize the sensor."""
         import trakt
+        from pytz import timezone
+        self._tz = timezone(str(hass.config.time_zone))
         trakt.core.OAUTH_TOKEN = token
         trakt.core.CLIENT_ID = config[CONF_CLIENT_ID]
         trakt.core.CLIENT_SECRET = config[CONF_CLIENT_SECRET]
@@ -129,10 +131,22 @@ class TraktMyShowCalendarSensor(Entity):
     def update(self):
         """Get the latest state of the sensor."""
         from trakt.calendar import MyShowCalendar
+        from trakt.tv import TVShow
+        import requests
+        attributes = {}
+        default = {}
+        card_json = []
+        default['title_default'] = '$title'
+        default['line1_default'] = '$episode'
+        default['line2_default'] = '$release'
+        default['line3_default'] = '$rating - $runtime'
+        default['line4_default'] = '$number - $studio'
+        default['icon'] = 'mdi:arrow-down-bold'
+        card_json.append(default)
         calendar = MyShowCalendar(days=self._days)
 
         if not calendar:
-            _LOGGER.error("Nothing in calendar")
+            _LOGGER.error("Nothing in upcoming calendar")
             return False
 
         self._state = len(calendar)
@@ -141,18 +155,41 @@ class TraktMyShowCalendarSensor(Entity):
             if not show:
                 continue
 
-            self._hass.data[DATA_UPCOMING][xstr(show.show) + ' - ' + xstr(show.title)] = {
-                "show": xstr(show.show),
-                "title": xstr(show.title),
-                "season": xstr(show.season),
-                "number": xstr(show.number),
-                "overview": xstr(show.overview),
-                "airs_at": xstr(show.airs_at),
-                "trakt_id": xstr(show.trakt),
-                "tmdb_id": xstr(show.tmdb),
-                "tvdb_id": xstr(show.tvdb),
-                "imdb_id": xstr(show.imdb),
+            show_details = TVShow(show.show)
+
+            if not show_details:
+                continue
+
+            session = requests.Session()
+            try:
+                tmdb_url = session.get('http://api.tmdb.org/3/tv/{}?api_key=0eee347e2333d7a97b724106353ca42f'.format(
+                    str(show_details.tmdb)))
+                tmdb_json = tmdb_url.json()
+            except requests.exceptions.RequestException as e:
+                _LOGGER.warning('api.themoviedb.org is not responding')
+                return
+            image_url = 'https://image.tmdb.org/t/p/w%s%s'
+            if days_until(show.airs_at.isoformat() + 'Z', self._tz) <= 7:
+                release = '$day, $time'
+            else:
+                release = '$day, $date $time'
+            card_item = {
+                'airdate': show.airs_at.isoformat() + 'Z',
+                'release': release,
+                'flag': False,
+                'title': show.show,
+                'episode': show.title,
+                'number': 'S' + str(show.season) + 'E' + str(show.number),
+                'rating': tmdb_json['vote_average'],
+                'poster': image_url % ('500', tmdb_json['poster_path']),
+                'fanart': image_url % ('780', tmdb_json['backdrop_path']),
+                'runtime': tmdb_json['episode_run_time'][0] if len(tmdb_json['episode_run_time']) > 0 else '',
+                'studio': tmdb_json['networks'][0]['name'] if len(tmdb_json['networks']) > 0 else ''
             }
+            card_json.append(card_item)
+
+        attributes['data'] = json.dumps(card_json)
+        self._hass.data[DATA_UPCOMING] = attributes
 
     @property
     def name(self):
@@ -178,3 +215,15 @@ class TraktMyShowCalendarSensor(Entity):
     def device_state_attributes(self):
         """Return the state attributes of the sensor."""
         return self._hass.data[DATA_UPCOMING]
+
+
+def days_until(date, tz):
+    from pytz import utc
+    date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+    date = str(date.replace(tzinfo=utc).astimezone(tz))[:10]
+    date = time.strptime(date, '%Y-%m-%d')
+    date = time.mktime(date)
+    now = datetime.now().strftime('%Y-%m-%d')
+    now = time.strptime(now, '%Y-%m-%d')
+    now = time.mktime(now)
+    return int((date - now) / 86400)

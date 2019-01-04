@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.0.3-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2018.svg?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/version-0.0.4-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2018.svg?style=for-the-badge)](#)
 
 [![maintainer](https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge)](#)
 
@@ -8,10 +8,18 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/zJtVxUAgH)
 
 # sensor.trakt
-[Trakt](https://www.trakt.tv) component for [Home Assistant](https://www.home-assistant.io/)
+[Trakt](https://www.trakt.tv) component to feed [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card) with
+Trakt's upcoming shows for [Home Assistant](https://www.home-assistant.io/)
 
-To get started put `/custom_components/sensor/trakt.py` here:
-`<config directory>/custom_components/sensor/trakt.py`
+## Installation:
+
+1. Install this component by copying to your `/custom_components/sensor/` folder.
+2. Install the card: [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card)
+3. Add the code to your `configuration.yaml` using the config options below.
+4. Add the code for the card to your `ui-lovelace.yaml`. 
+5. **You will need to restart after installation for the component to start working.**
+
+* If you're having issues, check out the [troubleshooting guide](https://github.com/custom-cards/upcoming-media-card/blob/master/troubleshooting.md) before posting an issue or asking for help on the forums.
 
 **Example configuration.yaml:**
 
