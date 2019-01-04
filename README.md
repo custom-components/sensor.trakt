@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.0.2-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2018.svg?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/version-0.0.3-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2018.svg?style=for-the-badge)](#)
 
 [![maintainer](https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge)](#)
 
@@ -32,7 +32,8 @@ key | description
 **id (Required)** | Client ID (create new app at https://trakt.tv/oauth/applications)
 **secret (Required)** | Client Secret (create new app at https://trakt.tv/oauth/applications)
 **username (Required)** | trakt.tv username
-**days (Optional)** | How many days to look forward for movies/shows
+**days (Optional)** | How many days to look forward for movies/shows. Default `30`
+**name (Optional)** | Sensor name. Default `Trakt Upcoming Calendar`
 
 ***
 
