@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.0.5-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2018.svg?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/version-0.0.6-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2018.svg?style=for-the-badge)](#)
 
 [![maintainer](https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge)](#)
 
@@ -30,18 +30,21 @@ sensor:
   secret: 'sdfoiwahjeflkaswjefi83q7829045uoijksldf'
   username: iantrich
   days: 10
+  exclude:
+    'The Bachelor'
 ```
 
 **Configuration variables:**
 
-key | description
-:--- | :---
-**platform (Required)** | `trakt`
-**id (Required)** | Client ID (create new app at https://trakt.tv/oauth/applications)
-**secret (Required)** | Client Secret (create new app at https://trakt.tv/oauth/applications)
-**username (Required)** | trakt.tv username
-**days (Optional)** | How many days to look forward for movies/shows. Default `30`
-**name (Optional)** | Sensor name. Default `Trakt Upcoming Calendar`
+key | type | description
+:--- | :--- | :---
+**platform (Required)** | string | `trakt`
+**id (Required)** | sring | Client ID (create new app at https://trakt.tv/oauth/applications)
+**secret (Required)** | string | Client Secret (create new app at https://trakt.tv/oauth/applications)
+**username (Required)** | string | trakt.tv username
+**days (Optional)** | number | How many days to look forward for movies/shows. Default `30`
+**name (Optional)** | string | Sensor name. Default `Trakt Upcoming Calendar`
+**exclude (Optional)** | array | List of show titles to exclude as Trakt does not allow removal of shows from its service
 
 ***
 
