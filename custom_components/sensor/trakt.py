@@ -16,20 +16,23 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 
 REQUIREMENTS = ['trakt==2.8.2', 'requests_oauthlib==1.0.0']
 
 BASE_URL = 'https://api-v2launch.trakt.tv/'
 CONF_CLIENT_ID = 'id'
 CONF_CLIENT_SECRET = 'secret'
-CONF_USERNAME = 'username'
 CONF_DAYS = 'days'
+CONF_EXCLUDE = 'exclude'
 CONF_NAME = 'name'
+CONF_USERNAME = 'username'
 DATA_UPCOMING = 'trakt_upcoming'
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 SCAN_INTERVAL = timedelta(minutes=30)
 TOKEN_FILE = '.trakt.conf'
+
+LIST_SCHEMA = vol.Schema([str])
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_CLIENT_ID): cv.string,
@@ -37,6 +40,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_USERNAME): cv.string,
     vol.Optional(CONF_DAYS, default=30): cv.positive_int,
     vol.Optional(CONF_NAME, default='Trakt Upcoming Calendar'): cv.string,
+    vol.Optional(CONF_EXCLUDE, default=[]): LIST_SCHEMA,
 })
 
 _CONFIGURING = {}
@@ -126,6 +130,7 @@ class TraktMyShowCalendarSensor(Entity):
         self._state = None
         self._hass.data[DATA_UPCOMING] = {}
         self._name = config[CONF_NAME]
+        self._exclude = config[CONF_EXCLUDE]
         self.update()
 
     def update(self):
@@ -152,11 +157,11 @@ class TraktMyShowCalendarSensor(Entity):
         self._state = len(calendar)
 
         for show in calendar:
-            if not show:
+            if not show or show.show in self._exclude:
                 continue
 
             try:
-                show_details = TVShow(show.show)
+                show_details = TVShow.search(show.show, show.year)
             except AttributeError:
                 _LOGGER.error('Unable to retrieve show details for ' + show.show)
 
@@ -166,7 +171,7 @@ class TraktMyShowCalendarSensor(Entity):
             session = requests.Session()
             try:
                 tmdb_url = session.get('http://api.tmdb.org/3/tv/{}?api_key=0eee347e2333d7a97b724106353ca42f'.format(
-                    str(show_details.tmdb)))
+                    str(show_details[0].tmdb)))
                 tmdb_json = tmdb_url.json()
             except requests.exceptions.RequestException as e:
                 _LOGGER.warning('api.themoviedb.org is not responding')
