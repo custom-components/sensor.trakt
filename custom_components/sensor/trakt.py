@@ -161,7 +161,7 @@ class TraktMyShowCalendarSensor(Entity):
                 continue
 
             try:
-                show_details = TVShow(show.show)
+                show_details = TVShow.search(show.show, show.year)
             except AttributeError:
                 _LOGGER.error('Unable to retrieve show details for ' + show.show)
 
@@ -171,7 +171,7 @@ class TraktMyShowCalendarSensor(Entity):
             session = requests.Session()
             try:
                 tmdb_url = session.get('http://api.tmdb.org/3/tv/{}?api_key=0eee347e2333d7a97b724106353ca42f'.format(
-                    str(show_details.tmdb)))
+                    str(show_details[0].tmdb)))
                 tmdb_json = tmdb_url.json()
             except requests.exceptions.RequestException as e:
                 _LOGGER.warning('api.themoviedb.org is not responding')
