@@ -114,8 +114,8 @@ def save_token(hass, token):
         data_file.write(json.dumps(token))
 
 
-class TraktMyShowCalendarSensor(Entity):
-    """Representation of a Trakt My Show Calendar sensor."""
+class TraktUpcomingCalendarSensor(Entity):
+    """Representation of a Trakt Upcoming Calendar sensor."""
 
     def __init__(self, hass, config, token):
         """Initialize the sensor."""
@@ -181,6 +181,7 @@ class TraktMyShowCalendarSensor(Entity):
                 release = '$day, $time'
             else:
                 release = '$day, $date $time'
+            
             card_item = {
                 'airdate': show.airs_at.isoformat() + 'Z',
                 'release': release,
@@ -188,11 +189,11 @@ class TraktMyShowCalendarSensor(Entity):
                 'title': show.show,
                 'episode': show.title,
                 'number': 'S' + str(show.season) + 'E' + str(show.number),
-                'rating': tmdb_json['vote_average'],
-                'poster': image_url % ('500', tmdb_json['poster_path']),
-                'fanart': image_url % ('780', tmdb_json['backdrop_path']),
-                'runtime': tmdb_json['episode_run_time'][0] if len(tmdb_json['episode_run_time']) > 0 else '',
-                'studio': tmdb_json['networks'][0]['name'] if len(tmdb_json['networks']) > 0 else ''
+                'rating': tmdb_json.get('vote_average', ''),
+                'poster': image_url % ('500', tmdb_json.get('poster_path', '')),
+                'fanart': image_url % ('780', tmdb_json.get('backdrop_path', '')),
+                'runtime': tmdb_json.get('episode_run_time')[0] if len(tmdb_json.get('episode_run_time')) > 0 else '',
+                'studio': tmdb_json.get('networks')[0].get('name', '') if len(tmdb_json.get('networks')) > 0 else ''
             }
             card_json.append(card_item)
 
