@@ -93,7 +93,7 @@ def continue_setup_platform(hass, config, token, add_devices, discovery_info=Non
     if "trakt" in _CONFIGURING:
         hass.components.configurator.request_done(_CONFIGURING.pop("trakt"))
 
-    add_devices([TraktMyShowCalendarSensor(hass, config, token)], True)
+    add_devices([TraktUpcomingCalendarSensor(hass, config, token)], True)
 
 
 def load_token(hass):
