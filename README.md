@@ -1,15 +1,20 @@
-[![Version](https://img.shields.io/badge/version-0.0.8-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2019.svg?style=for-the-badge)](#)
+# sensor.trakt
+[Trakt](https://www.trakt.tv) component to feed [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card) with
+Trakt's upcoming shows for [Home Assistant](https://www.home-assistant.io/)
 
-[![maintainer](https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge)](#)
+[![GitHub Release][releases-shield]][releases]
+[![License][license-shield]](LICENSE.md)
+
+![Project Maintenance][maintenance-shield]
+[![GitHub Activity][commits-shield]][commits]
+
+[![Discord][discord-shield]][discord]
+[![Community Forum][forum-shield]][forum]
 
 ## Support
 Hey dude! Help me out for a couple of :beers: or a :coffee:!
 
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/zJtVxUAgH)
-
-# sensor.trakt
-[Trakt](https://www.trakt.tv) component to feed [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card) with
-Trakt's upcoming shows for [Home Assistant](https://www.home-assistant.io/)
 
 ## Installation:
 
@@ -49,3 +54,14 @@ key | type | description
 ***
 
 Due to how `custom_components` are loaded, it is normal to see a `ModuleNotFoundError` error on first boot after adding this, to resolve it, restart Home-Assistant.
+
+[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-components/sensor.trakt.svg
+[commits]: https://github.com/custom-components/sensor.trakt/commits/master
+[discord]: https://discord.gg/Qa5fW2R
+[discord-shield]: https://img.shields.io/discord/478094546522079232.svg
+[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg
+[forum]: https://community.home-assistant.io/t/lovelace-upcoming-media-card/66562
+[license-shield]: https://img.shields.io/github/license/custom-components/sensor.trakt.svg
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg
+[releases-shield]: https://img.shields.io/github/release/custom-components/sensor.trakt.svg
+[releases]: https://github.com/custom-components/sensor.trakt/releases
