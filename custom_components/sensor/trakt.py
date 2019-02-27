@@ -177,6 +177,8 @@ class TraktUpcomingCalendarSensor(Entity):
                 _LOGGER.warning('api.themoviedb.org is not responding')
                 return
             image_url = 'https://image.tmdb.org/t/p/w%s%s'
+            if days_until(show.airs_at.isoformat() + 'Z', self._tz) < 0:  
+                continue
             if days_until(show.airs_at.isoformat() + 'Z', self._tz) <= 7:
                 release = '$day, $time'
             else:
