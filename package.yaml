@@ -1,0 +1,15 @@
+name: sensor.trakt
+description: 📺 Trakt component for Home Assistant and Upcoming Media Card
+type: component
+keywords:
+  - sensor
+  - trakt
+  - television
+  - media
+author:
+  name: Ian Richardson
+  email: iantrich@gmail.com
+  homepage: https://iantrich.github.io
+license: MIT
+files:
+  - custom_components/trakt/sensor.py
