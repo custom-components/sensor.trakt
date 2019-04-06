@@ -15,7 +15,7 @@ Trakt's upcoming shows for [Home Assistant](https://www.home-assistant.io/)
 
 ## Installation:
 
-1. Install this component by copying to your `/custom_components/sensor/` folder.
+1. Install this component by copying to your `/custom_components/trakt/` folder.
 2. Install the card: [Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card)
 3. Add the code to your `configuration.yaml` using the config options below.
 4. Add the code for the card to your `ui-lovelace.yaml`.
