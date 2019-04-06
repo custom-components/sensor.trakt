@@ -1,11 +1,4 @@
-"""
-Home Assistant component to feed the Upcoming Media Lovelace card with
-Trakt user's upcoming TV episodes.
-
-https://github.com/custom-components/sensor.trakt
-
-https://github.com/custom-cards/upcoming-media-card
-"""
+"""Sensor platform for Trakt"""
 import json
 import logging
 import time
@@ -16,7 +9,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.0.6'
+__version__ = '1.0.0'
 
 REQUIREMENTS = ['trakt==2.8.2', 'requests_oauthlib==1.0.0']
 
