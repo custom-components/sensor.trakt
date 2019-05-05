@@ -9,7 +9,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 REQUIREMENTS = ['trakt==2.8.2', 'requests_oauthlib==1.0.0']
 
