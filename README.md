@@ -41,8 +41,8 @@ sensor:
 key | type | description
 :--- | :--- | :---
 **platform (Required)** | string | `trakt`
-**id (Required)** | sring | Client ID (create new app at https://trakt.tv/oauth/applications)
-**secret (Required)** | string | Client Secret (create new app at https://trakt.tv/oauth/applications)
+**id (Required)** | string | Client ID (create new app at https://trakt.tv/oauth/applications - use device auth in redirect)
+**secret (Required)** | string | Client Secret (create new app at https://trakt.tv/oauth/applications - use device auth in redirect)
 **username (Required)** | string | trakt.tv username
 **days (Optional)** | number | How many days to look forward for movies/shows. Default `30`
 **name (Optional)** | string | Sensor name. Default `Trakt Upcoming Calendar`
