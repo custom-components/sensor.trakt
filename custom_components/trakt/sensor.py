@@ -193,6 +193,7 @@ class TraktUpcomingCalendarSensor(Entity):
             card_json.append(card_item)
 
         attributes['data'] = json.dumps(card_json)
+        attributes['attribution'] = "Data provided by trakt.tv"
         self._hass.data[DATA_UPCOMING] = attributes
 
     @property
