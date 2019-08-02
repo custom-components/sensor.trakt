@@ -38,9 +38,11 @@ sensor:
 
 ### Example ui-lovelace.yaml:
 
-    - type: custom:upcoming-media-card
-      entity: sensor.upcoming_calendar
-      title: Upcoming Movies
+```yaml
+type: custom:upcoming-media-card
+entity: sensor.upcoming_calendar
+title: Upcoming Movies
+```
 
 **Configuration variables:**
 
