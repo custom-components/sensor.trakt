@@ -275,6 +275,7 @@ class Trakt_Data:
         await hass.data[DOMAIN].async_set_scan_interval(
             entry.options[CONF_SCAN_INTERVAL]
         )
+        await hass.data[DOMAIN].async_update()
 
 
 def days_until(date):
