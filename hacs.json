@@ -1,0 +1,6 @@
+{
+  "name": "Trakt",
+  "domains": ["sensor"],
+  "homeassistant": "0.90.0",
+  "render_readme": true
+}

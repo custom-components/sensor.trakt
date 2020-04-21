@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "pick_implementation": { "title": "Pick Authentication Method" }
+    },
+    "abort": {
+      "already_setup": "You can only configure one Trakt instance.",
+      "authorize_url_timeout": "Timeout generating authorize url.",
+      "missing_configuration": "The Trakt integration is not configured. Please follow the documentation."
+    },
+    "create_entry": { "default": "Successfully authenticated with Trakt." }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Update frequency (minutes)",
+          "days": "Days to look forward for movies/shows",
+          "exclude": "list of excluded shows (comma separated)"
+        }
+      }
+    }
+  }
+}
