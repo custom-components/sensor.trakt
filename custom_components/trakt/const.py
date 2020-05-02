@@ -10,7 +10,6 @@ CONF_DAYS = "days"
 CONF_EXCLUDE = "exclude"
 
 DATA_UPDATED = "trakt_data_updated"
-DATA_TRAKT_CRED = "trakt_credentials"
 
 DEFAULT_DAYS = 30
 DEFAULT_SCAN_INTERVAL = 60

@@ -1,10 +1,16 @@
 {
   "config": {
     "step": {
-      "pick_implementation": { "title": "Pick Authentication Method" }
+      "pick_implementation": { "title": "Pick Authentication Method" },
+      "user": {
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client secret"
+        }
+      }
     },
     "abort": {
-      "already_setup": "You can only configure one Trakt instance.",
+      "already_configured": "This client_id is already configured.",
       "authorize_url_timeout": "Timeout generating authorize url.",
       "missing_configuration": "The Trakt integration is not configured. Please follow the documentation."
     },
