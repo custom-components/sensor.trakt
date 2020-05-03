@@ -1,14 +1,14 @@
 """Sensor platform for Trakt"""
-from homeassistant.const import ATTR_ATTRIBUTION
+from homeassistant.const import ATTR_ATTRIBUTION, CONF_NAME, CONF_CLIENT_ID
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import Entity
 
-from .const import ATTRIBUTION, DATA_UPDATED, DEFAULT_NAME, DOMAIN
+from .const import ATTRIBUTION, DATA_UPDATED, DOMAIN
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up device tracker for Mikrotik component."""
-    tk_data = hass.data[DOMAIN]
+    tk_data = hass.data[DOMAIN][config_entry.entry_id]
 
     async_add_entities([TraktUpcomingCalendarSensor(tk_data)], True)
 
@@ -19,16 +19,17 @@ class TraktUpcomingCalendarSensor(Entity):
     def __init__(self, tk_data):
         """Initialize the sensor."""
         self.tk_data = tk_data
+        self._name = tk_data.config_entry.data[CONF_NAME]
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return DEFAULT_NAME
+        return self._name
 
     @property
     def unique_id(self):
         """Return the unique id of the entity."""
-        return DEFAULT_NAME
+        return self.tk_data.config_entry.data[CONF_CLIENT_ID]
 
     @property
     def should_poll(self):
