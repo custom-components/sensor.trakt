@@ -23,8 +23,7 @@ from homeassistant.const import (
     CONF_SCAN_INTERVAL,
 )
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
-from homeassistant.helpers.dispatcher import async_dispatcher_send
-from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from trakt.calendar import MyShowCalendar
 from trakt.tv import TVShow
 
@@ -32,13 +31,13 @@ from . import config_flow
 from .const import (
     CARD_DEFAULT,
     CONF_DAYS,
-    DATA_UPDATED,
     DEFAULT_DAYS,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     OAUTH2_AUTHORIZE,
     OAUTH2_TOKEN,
 )
+from homeassistant.exceptions import ConfigEntryNotReady
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -71,15 +70,16 @@ async def async_setup_entry(hass, entry) -> bool:
     session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
     await session.async_ensure_token_valid()
 
-    trakt_data = Trakt_Data(hass, entry, session)
-
-    if not await trakt_data.async_setup():
+    coordinator = Trakt_Data(hass, entry, session)
+    if not await coordinator.async_setup():
         return False
 
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = trakt_data
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
+
     hass.async_create_task(
         hass.config_entries.async_forward_entry_setup(entry, "sensor")
     )
+
     return True
 
 
@@ -95,7 +95,7 @@ async def async_unload_entry(hass, entry) -> bool:
     return True
 
 
-class Trakt_Data:
+class Trakt_Data(DataUpdateCoordinator):
     """Represent Trakt data."""
 
     def __init__(
@@ -109,8 +109,19 @@ class Trakt_Data:
         self.config_entry = config_entry
         self.session = session
         self.unsub_timer = None
-        self.details = {}
-        self.calendar = None
+        self.calendar = {}
+
+        super().__init__(
+            self.hass,
+            _LOGGER,
+            name=DOMAIN,
+            update_method=self.async_update,
+            update_interval=timedelta(
+                minutes=self.config_entry.options.get(
+                    CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                )
+            ),
+        )
 
     @property
     def days(self):
@@ -135,15 +146,12 @@ class Trakt_Data:
             self.calendar = await self.hass.async_add_executor_job(
                 MyShowCalendar, {CONF_DAYS: self.days}
             )
-        except trakt.errors.OAuthException:
-            _LOGGER.error(
-                "Trakt api is unauthrized. Please remove the entry and reconfigure."
-            )
-            return
+        except trakt.errors.TraktInternalException:
+            _LOGGER.error("Trakt api encountered an internal error.")
+            raise UpdateFailed
 
         if not self.calendar:
             _LOGGER.warning("Trakt upcoming calendar is empty")
-            return
 
         for show in self.calendar:
             if not show or show.show in self.exclude:
@@ -203,10 +211,7 @@ class Trakt_Data:
             }
             card_json.append(card_item)
 
-        self.details = json.dumps(card_json)
-
-        _LOGGER.debug("Trakt data updated")
-        async_dispatcher_send(self.hass, DATA_UPDATED)
+        return json.dumps(card_json)
 
     async def async_setup(self):
         """Set up Trakt Data."""
@@ -214,34 +219,26 @@ class Trakt_Data:
         trakt.core.CLIENT_ID = self.config_entry.data[CONF_CLIENT_ID]
 
         try:
-            await self.async_update()
+            await self.async_refresh()
         except trakt.errors.OAuthException:
             _LOGGER.error(
                 "Trakt api is unauthrized. Please remove the entry and reconfigure."
             )
             return False
 
-        await self.async_set_scan_interval(self.scan_interval)
-        self.config_entry.add_update_listener(self.async_options_updated)
+        if not self.last_update_success:
+            raise ConfigEntryNotReady
+        self.config_entry.add_update_listener(async_options_updated)
 
         return True
 
-    async def async_set_scan_interval(self, scan_interval):
-        """Update scan interval."""
 
-        if self.unsub_timer is not None:
-            self.unsub_timer()
-        self.unsub_timer = async_track_time_interval(
-            self.hass, self.async_update, timedelta(minutes=scan_interval)
-        )
-        await self.async_update()
-
-    @staticmethod
-    async def async_options_updated(hass, entry):
-        """Triggered by config entry options updates."""
-        await hass.data[DOMAIN][entry.entry_id].async_set_scan_interval(
-            entry.options[CONF_SCAN_INTERVAL]
-        )
+async def async_options_updated(hass, entry):
+    """Triggered by config entry options updates."""
+    hass.data[DOMAIN][entry.entry_id].update_interval = timedelta(
+        minutes=entry.options[CONF_SCAN_INTERVAL]
+    )
+    await hass.data[DOMAIN][entry.entry_id].async_request_refresh()
 
 
 def days_until(date):

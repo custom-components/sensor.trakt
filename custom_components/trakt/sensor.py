@@ -1,25 +1,24 @@
 """Sensor platform for Trakt"""
 from homeassistant.const import ATTR_ATTRIBUTION, CONF_NAME, CONF_CLIENT_ID
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
+
 from homeassistant.helpers.entity import Entity
 
-from .const import ATTRIBUTION, DATA_UPDATED, DOMAIN
+from .const import ATTRIBUTION, DOMAIN
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up device tracker for Mikrotik component."""
-    tk_data = hass.data[DOMAIN][config_entry.entry_id]
-
-    async_add_entities([TraktUpcomingCalendarSensor(tk_data)], True)
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    async_add_entities([TraktUpcomingCalendarSensor(coordinator)], True)
 
 
 class TraktUpcomingCalendarSensor(Entity):
     """Representation of a Trakt Upcoming Calendar sensor."""
 
-    def __init__(self, tk_data):
+    def __init__(self, coordinator):
         """Initialize the sensor."""
-        self.tk_data = tk_data
-        self._name = tk_data.config_entry.data[CONF_NAME]
+        self.coordinator = coordinator
+        self._name = coordinator.config_entry.data[CONF_NAME]
 
     @property
     def name(self):
@@ -29,7 +28,7 @@ class TraktUpcomingCalendarSensor(Entity):
     @property
     def unique_id(self):
         """Return the unique id of the entity."""
-        return self.tk_data.config_entry.data[CONF_CLIENT_ID]
+        return self.coordinator.config_entry.data[CONF_CLIENT_ID]
 
     @property
     def should_poll(self):
@@ -39,7 +38,7 @@ class TraktUpcomingCalendarSensor(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return len(self.tk_data.calendar)
+        return len(self.coordinator.calendar) if self.coordinator.calendar else 0
 
     @property
     def icon(self):
@@ -54,12 +53,19 @@ class TraktUpcomingCalendarSensor(Entity):
     @property
     def device_state_attributes(self):
         """Return the state attributes of the sensor."""
-        attributes = {"data": self.tk_data.details, ATTR_ATTRIBUTION: ATTRIBUTION}
+        attributes = {
+            "data": self.coordinator.data,
+            ATTR_ATTRIBUTION: ATTRIBUTION,
+        }
 
         return attributes
 
     async def async_added_to_hass(self):
         """Handle entity which will be added."""
         self.async_on_remove(
-            async_dispatcher_connect(self.hass, DATA_UPDATED, self.async_write_ha_state)
+            self.coordinator.async_add_listener(self.async_write_ha_state)
         )
+
+    async def async_update(self):
+        """Request coordinator to update data."""
+        await self.coordinator.async_request_refresh()
