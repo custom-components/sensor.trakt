@@ -144,7 +144,7 @@ class Trakt_Data(DataUpdateCoordinator):
 
         try:
             self.calendar = await self.hass.async_add_executor_job(
-                MyShowCalendar, {CONF_DAYS: self.days}
+                MyShowCalendar, None, self.days
             )
         except trakt.errors.TraktInternalException:
             _LOGGER.error("Trakt api encountered an internal error.")
