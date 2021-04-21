@@ -9,7 +9,8 @@ https://github.com/custom-cards/upcoming-media-card
 import asyncio
 import json
 import logging
-from datetime import timedelta
+import math
+from datetime import timedelta, datetime
 
 import async_timeout
 import homeassistant.util.dt as dt_util
@@ -63,8 +64,10 @@ async def async_setup_entry(hass, entry) -> bool:
         ),
     )
 
-    implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
-        hass, entry
+    implementation = (
+        await config_entry_oauth2_flow.async_get_config_entry_implementation(
+            hass, entry
+        )
     )
 
     session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
@@ -143,12 +146,28 @@ class Trakt_Data(DataUpdateCoordinator):
         card_json = [CARD_DEFAULT]
 
         try:
-            self.calendar = await self.hass.async_add_executor_job(
-                MyShowCalendar, None, self.days
-            )
+            calendars = []
+            max_fetch_days = 33
+            total_partition = math.ceil(self.days / max_fetch_days)
+            for partition in range(0, total_partition):
+                from_date = (
+                    datetime.now() + timedelta(partition * max_fetch_days)
+                ).strftime("%Y-%m-%d")
+                days = (
+                    max_fetch_days
+                    if partition != total_partition - 1
+                    else self.days % max_fetch_days
+                )
+                calendars.append(
+                    await self.hass.async_add_executor_job(
+                        MyShowCalendar, from_date, days
+                    )
+                )
         except trakt.errors.TraktInternalException:
             _LOGGER.error("Trakt api encountered an internal error.")
             raise UpdateFailed
+
+        self.calendar = [show for calendar in calendars for show in calendar]
 
         if not self.calendar:
             _LOGGER.warning("Trakt upcoming calendar is empty")
