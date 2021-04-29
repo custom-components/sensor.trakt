@@ -5,5 +5,5 @@
   "config_flow": true,
   "codeowners": ["@iantrich", "@engrbm"],
   "requirements": ["trakt==2.14.0"],
-  "version": "2.0.2"
+  "version": "2.0.3"
 }
