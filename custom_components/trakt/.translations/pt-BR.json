@@ -1,0 +1,30 @@
+{
+  "config": {
+    "step": {
+      "pick_implementation": { "title": "Escolha o método de autenticação" },
+      "user": {
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client secret"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Esse client_id já está configurado.",
+      "authorize_url_timeout": "Tempo limite gerando URL de autorização.",
+      "missing_configuration": "A integração do Trakt não está configurada. Por favor, siga a documentação."
+    },
+    "create_entry": { "default": "Autenticado com sucesso com Trakt." }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Frequência de atualização (minutos)",
+          "days": "Dias de espera por filmes/programas",
+          "exclude": "lista de programas excluídos (separados por vírgulas)"
+        }
+      }
+    }
+  }
+}
