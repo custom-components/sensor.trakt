@@ -19,7 +19,7 @@ Trakt's upcoming shows for [Home Assistant](https://www.home-assistant.io/)
 1. Create new app at https://trakt.tv/oauth/applications
 2. Use the following redirect_uri:
    - With HA cloud configured: https://\<cloud-remote-url>/auth/external/callback
-   - Without HA cloud configured: http://\<local-ip>:<port>/auth/external/callback
+   - Without HA cloud configured: http://\<local-ip>:\<port>/auth/external/callback
 3. Save the application and then note down the `client_id` and `client_secret`
 
 ## Installation in Home Assistant:
