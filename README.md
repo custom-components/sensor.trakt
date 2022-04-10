@@ -33,8 +33,8 @@ Trakt's upcoming shows for [Home Assistant](https://www.home-assistant.io/)
 
 ```yaml
 type: custom:upcoming-media-card
-entity: sensor.upcoming_calendar
-title: Upcoming Movies
+entity: sensor.trakt_upcoming_calendar
+title: Upcoming Media
 ```
 
 [buymecoffee]: https://www.buymeacoffee.com/iantrich
