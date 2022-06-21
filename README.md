@@ -5,11 +5,11 @@ Trakt's upcoming shows for [Home Assistant](https://www.home-assistant.io/)
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
+[![hacs_badge][hacsbadge]][hacs]
 [![License][license-shield]](LICENSE.md)
 
 ![Project Maintenance][maintenance-shield]
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
-[![hacs_badge][hacsbadge]][hacs]
 
 [![Discord][discord-shield]][discord]
 [![Community Forum][forum-shield]][forum]
