@@ -1,7 +1,9 @@
 {
   "config": {
     "step": {
-      "pick_implementation": { "title": "Pick Authentication Method" },
+      "pick_implementation": {
+        "title": "%key:common::config_flow::title::oauth2_pick_implementation%]"
+      },
       "user": {
         "data": {
           "client_id": "Client ID",
@@ -10,19 +12,20 @@
       }
     },
     "abort": {
-      "already_configured": "This client_id is already configured.",
-      "authorize_url_timeout": "Timeout generating authorize url.",
-      "missing_configuration": "The Trakt integration is not configured. Please follow the documentation."
+      "already_configured": "[%key:common::config_flow::abort::already_configured_account%]",
+      "authorize_url_timeout": "[%key:common::config_flow::abort::oauth2_authorize_url_timeout%]",
+      "missing_configuration": "[%key:common::config_flow::abort::oauth2_missing_configuration%]"
     },
-    "create_entry": { "default": "Successfully authenticated with Trakt." }
+    "create_entry": {
+      "default": "[%key:common::config_flow::create_entry::authenticated%]"
+    }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "scan_interval": "Update frequency (minutes)",
           "days": "Days to look forward for movies/shows",
-          "exclude": "list of excluded shows (comma separated)"
+          "exclude": "Excluded shows"
         }
       }
     }
