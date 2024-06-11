@@ -1,5 +1,7 @@
 """Sensor platform for Trakt."""
 
+from typing import Any
+
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_CLIENT_ID, CONF_NAME
@@ -42,6 +44,6 @@ class TraktUpcomingCalendarSensor(
         return len(self.coordinator.tv_shows)
 
     @property
-    def extra_state_attributes(self) -> dict[str, str]:
+    def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the sensor."""
         return {"data": self.coordinator.data}
