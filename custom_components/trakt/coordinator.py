@@ -4,6 +4,7 @@ import asyncio
 from datetime import timedelta
 import json
 import logging
+from typing import Any
 
 from homeassistant.const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, CONF_EXCLUDE
 from homeassistant.core import HomeAssistant
@@ -52,7 +53,7 @@ class TraktDataUpdateCoordinator(DataUpdateCoordinator[str]):
 
     async def _async_update_data(self) -> str:
         """Update Trakt data."""
-        card_json = [CARD_DEFAULT]
+        card_json: list[dict[str, Any]] = [CARD_DEFAULT]
         try:
             self.tv_shows = await self.hass.async_add_executor_job(
                 MyShowCalendar, None, self.days
@@ -72,7 +73,7 @@ class TraktDataUpdateCoordinator(DataUpdateCoordinator[str]):
 
         return json.dumps(card_json)
 
-    async def get_show_data(self, show: TVShow) -> dict[str, str] | None:
+    async def get_show_data(self, show: TVShow) -> dict[str, Any] | None:
         """Get TV show data."""
 
         try:
