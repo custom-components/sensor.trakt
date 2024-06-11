@@ -51,7 +51,7 @@ class TraktDataUpdateCoordinator(DataUpdateCoordinator[str]):
         """Return list of show titles to exclude."""
         return self.config_entry.options.get(CONF_EXCLUDE, [])
 
-    async def _async_update_data(self) -> str:
+    async def _async_update_data(self) -> list[dict[str,Any]]:
         """Update Trakt data."""
         card_json: list[dict[str, Any]] = [CARD_DEFAULT]
         try:
@@ -71,7 +71,7 @@ class TraktDataUpdateCoordinator(DataUpdateCoordinator[str]):
             results = await asyncio.gather(*tasks)
             card_json += [card_item for card_item in results if card_item is not None]
 
-        return json.dumps(card_json)
+        return card_json
 
     async def get_show_data(self, show: TVShow) -> dict[str, Any] | None:
         """Get TV show data."""
