@@ -1,71 +1,47 @@
-"""Sensor platform for Trakt"""
-from homeassistant.const import ATTR_ATTRIBUTION, CONF_NAME, CONF_CLIENT_ID
+"""Sensor platform for Trakt."""
 
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_CLIENT_ID, CONF_NAME
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import ATTRIBUTION, DOMAIN
+from .const import ATTRIBUTION
+from .coordinator import TraktDataUpdateCoordinator
+from .oauth_impl import HomeAssistant
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+):
     """Set up device tracker for Mikrotik component."""
-    coordinator = hass.data[DOMAIN][config_entry.entry_id]
-    async_add_entities([TraktUpcomingCalendarSensor(coordinator)], True)
+    coordinator: TraktDataUpdateCoordinator = config_entry.runtime_data
+    async_add_entities([TraktUpcomingCalendarSensor(coordinator)])
 
 
-class TraktUpcomingCalendarSensor(Entity):
+class TraktUpcomingCalendarSensor(
+    CoordinatorEntity[TraktDataUpdateCoordinator], SensorEntity
+):
     """Representation of a Trakt Upcoming Calendar sensor."""
 
-    def __init__(self, coordinator):
+    _attr_icon = "mdi:calendar"
+    _attr_native_unit_of_measurement = "shows"
+    _attr_attribution = ATTRIBUTION
+
+    def __init__(self, coordinator: TraktDataUpdateCoordinator) -> None:
         """Initialize the sensor."""
-        self.coordinator = coordinator
-        self._name = coordinator.config_entry.data[CONF_NAME]
+        super().__init__(coordinator)
+        self._attr_name = coordinator.config_entry.data[CONF_NAME]
+        self._attr_unique_id = coordinator.config_entry.data[CONF_CLIENT_ID]
 
     @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def unique_id(self):
-        """Return the unique id of the entity."""
-        return self.coordinator.config_entry.data[CONF_CLIENT_ID]
-
-    @property
-    def should_poll(self):
-        """Disable polling."""
-        return False
-
-    @property
-    def state(self):
+    def state(self) -> int:
         """Return the state of the sensor."""
-        return len(self.coordinator.calendar) if self.coordinator.calendar else 0
+        return len(self.coordinator.tv_shows)
 
     @property
-    def icon(self):
-        """Return the icon to use in the frontend."""
-        return "mdi:calendar"
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement this sensor expresses itself in."""
-        return "shows"
-
-    @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, str]:
         """Return the state attributes of the sensor."""
-        attributes = {
-            "data": self.coordinator.data,
-            ATTR_ATTRIBUTION: ATTRIBUTION,
-        }
-
-        return attributes
-
-    async def async_added_to_hass(self):
-        """Handle entity which will be added."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
-
-    async def async_update(self):
-        """Request coordinator to update data."""
-        await self.coordinator.async_request_refresh()
+        return {"data": self.coordinator.data}
